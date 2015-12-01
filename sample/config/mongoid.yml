@@ -1,0 +1,12 @@
+development:
+  sessions:
+    default:
+      database: model_label_dev
+      hosts:
+        - localhost:27017
+test:
+  sessions:
+    default:
+      database: model_label_test
+      hosts:
+        - localhost:27017
