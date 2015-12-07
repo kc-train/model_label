@@ -3,7 +3,7 @@ require 'rails_helper'
 
 RSpec.describe ModelLabel, type: :model do
   before :context do
-    class ModelLabelConfig::Course
+    class ModelLabelConfigCourse
       include Mongoid::Document
       include Mongoid::Timestamps
     end
@@ -13,10 +13,10 @@ RSpec.describe ModelLabel, type: :model do
       include Mongoid::Timestamps
     end
 
-    ModelLabel.set_config {
-      "课程"   => ModelLabelConfig::Course,
+    ModelLabel.set_config({
+      "课程"   => ModelLabelConfigCourse,
       "测试题" => ModelLabelConfigQuestion
-    }
+    })
   end
 
   describe "field validates" do
@@ -42,7 +42,7 @@ RSpec.describe ModelLabel, type: :model do
           ml = ModelLabel::Label.create(:model_name => model_name, :name => name, :values => ["a","b"])
           expect(ml.valid?).to eq(true)
         }.to change{
-          ModelLabel.count
+          ModelLabel::Label.count
         }.by(1)
 
         name2 = "职务"
@@ -50,7 +50,7 @@ RSpec.describe ModelLabel, type: :model do
           ml = ModelLabel::Label.create(:model_name => model_name, :name => name2, :values => ["a","b"])
           expect(ml.valid?).to eq(true)
         }.to change{
-          ModelLabel.count
+          ModelLabel::Label.count
         }.by(1)
 
         name = "方向"
@@ -59,7 +59,7 @@ RSpec.describe ModelLabel, type: :model do
           expect(ml.valid?).to eq(false)
           expect(m.errors.message[:model_name]).not_to be_nil
         }.to change{
-          ModelLabel.count
+          ModelLabel::Label.count
         }.by(0)
       }
     end
@@ -68,27 +68,27 @@ RSpec.describe ModelLabel, type: :model do
       it{
         model_name = "ModelLabelConfig::Course"
         expect{
-          ml = ModelLabel.create(:model_name => model_name, :name => "方向", :values => ["a","a"])
+          ml = ModelLabel::Label.create(:model_name => model_name, :name => "方向", :values => ["a","a"])
           expect(ml.valid?).to eq(false)
           expect(m.errors.message[:values]).not_to be_nil
         }.to change{
-          ModelLabel.count
+          ModelLabel::Label.count
         }.by(0)
 
         expect{
-          ml = ModelLabel.create(:model_name => model_name, :name => "方向", :values => ["a", :a])
+          ml = ModelLabel::Label.create(:model_name => model_name, :name => "方向", :values => ["a", :a])
           expect(ml.valid?).to eq(false)
           expect(m.errors.message[:values]).not_to be_nil
         }.to change{
-          ModelLabel.count
+          ModelLabel::Label.count
         }.by(0)
 
         expect{
-          ml = ModelLabel.create(:model_name => model_name, :name => "方向", :values => ["1", 1])
+          ml = ModelLabel::Label.create(:model_name => model_name, :name => "方向", :values => ["1", 1])
           expect(ml.valid?).to eq(false)
           expect(m.errors.message[:values]).not_to be_nil
         }.to change{
-          ModelLabel.count
+          ModelLabel::Label.count
         }.by(0)
       }
     end
@@ -97,21 +97,21 @@ RSpec.describe ModelLabel, type: :model do
   describe "ModelLabelConfig::Course 设置 label" do
     before{
       name1 = "方向"
-      ModelLabel.create(:model_name => "ModelLabelConfig::Course", :name => name1, :values => ["法律","经济"])
+      ModelLabel::Label.create(:model_name => "ModelLabelConfig::Course", :name => name1, :values => ["法律","经济"])
 
       name2 = "类型"
-      ModelLabel.create(:model_name => "ModelLabelConfig::Course", :name => name2, :values => ["视频","PPT"])
+      ModelLabel::Label.create(:model_name => "ModelLabelConfig::Course", :name => name2, :values => ["视频","PPT"])
     }
 
     describe "create" do
       it{
         expect{
-          course = ModelLabelConfig::Course.create(
+          course = ModelLabelConfigCourse.create(
             :label_info => {"方向" => ["经济"]}
           )
-          expect(ModelLabelConfig::Course.where(:"label_info.方向".in => ["经济"]).to_a).to inlcude(course)
+          expect(ModelLabelConfigCourse.where(:"label_info.方向".in => ["经济"]).to_a).to inlcude(course)
         }.to change{
-          ModelLabelConfig::Course.count
+          ModelLabelConfigCourse.count
         }.by(1)
 
       }
@@ -130,11 +130,11 @@ RSpec.describe ModelLabel, type: :model do
     end
   end
 
-  describe "ModelLabelConfig::Course.with_label(name, value)" do
+  describe "ModelLabelConfigCourse.with_label(name, value)" do
     # TODO
   end
 
-  describe "ModelLabelConfig::Course.get_label_names" do
+  describe "ModelLabelConfigCourse.get_label_names" do
     # TODO
   end
 
