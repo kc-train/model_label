@@ -23,13 +23,13 @@ RSpec.describe ModelLabel, type: :model do
     describe "model_name 取值必须在 config 中配置的模型名范围内" do
       it{
         ModelLabel.get_models.each do |model|
-          ml = ModelLabel::Label.new(:model_name => model.to_s)
+          ml = ModelLabel::Label.create(:model_name => model.to_s)
           expect(ml.valid?).to eq(true)
         end
       }
 
       it{
-        ml = ModelLabel::Label.new(:model_name => "Lifeihahah")
+        ml = ModelLabel::Label.create(:model_name => "Lifeihahah")
         expect(ml.valid?).to eq(false)
       }
     end
