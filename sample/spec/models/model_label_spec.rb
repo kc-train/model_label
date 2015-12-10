@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 
-RSpec.describe ModelLabel, type: :model do
+RSpec.describe ModelLabel::Label, type: :model do
   before :context do
     class ModelLabelConfigCourse
       include Mongoid::Document
@@ -22,14 +22,15 @@ RSpec.describe ModelLabel, type: :model do
   describe "field validates" do
     describe "model_name 取值必须在 config 中配置的模型名范围内" do
       it{
-        ModelLabel.get_models.each do |model|
-          ml = ModelLabel::Label.create(:model => model.to_s)
+        name = "方向"
+        ModelLabel.get_models.each do |model_name|
+          ml = ModelLabel::Label.create(:model => model_name.to_s,:name => name)
           expect(ml.valid?).to eq(true)
         end
       }
 
       it{
-        ml = ModelLabel::Label.create(:model => "Lifeihahah")
+        ml = ModelLabel::Label.create(:model => "Lifeihahah",:name => "职务")
         expect(ml.valid?).to eq(false)
       }
     end
@@ -94,31 +95,31 @@ RSpec.describe ModelLabel, type: :model do
     end
   end
 
-  describe "ModelLabelConfig::Course 设置 label" do
-    # before{
-    #   name1 = "方向"
-    #   ModelLabel::Label.create(:model_name => "ModelLabelConfig::Course", :name => name1, :values => ["法律","经济"])
+  describe "ModelLabelConfigCourse 设置 label" do
+    before{
+      name1 = "方向"
+      ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name1, :values => ["法律","经济"])
 
-    #   name2 = "类型"
-    #   ModelLabel::Label.create(:model_name => "ModelLabelConfig::Course", :name => name2, :values => ["视频","PPT"])
-    # }
+      name2 = "类型"
+      ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name2, :values => ["视频","PPT"])
+    }
 
-    # describe "create" do
-    #   it{
-    #     expect{
-    #       course = ModelLabelConfigCourse.create(
-    #         :label_info => {"方向" => ["经济"]}
-    #       )
-    #       expect(ModelLabelConfigCourse.where(:"label_info.方向".in => ["经济"]).to_a).to inlcude(course)
-    #     }.to change{
-    #       ModelLabelConfigCourse.count
-    #     }.by(1)
+    describe "create" do
+      it{
+        expect{
+          course = ModelLabelConfigCourse.create(
+            :label_info => {"方向" => ["经济"]}
+          )
+          expect(ModelLabelConfigCourse.where(:"label_info.方向".in => ["经济"]).to_a).to include(course)
+        }.to change{
+          ModelLabelConfigCourse.count
+        }.by(1)
 
-    #   }
-    # end
+      }
+    end
 
     describe "course.set_label(name, values)" do
-      # TODO
+      
     end
 
     describe "course.add_label(name, value)" do

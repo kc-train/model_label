@@ -1,5 +1,5 @@
 module ModelLabel
-  module HostMethods
+  module ConfigCourses
     extend ActiveSupport::Concern
     included do
       field :label_info, :type => Hash
