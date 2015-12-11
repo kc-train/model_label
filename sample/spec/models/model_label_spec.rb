@@ -102,44 +102,88 @@ RSpec.describe ModelLabel::Label, type: :model do
 
       name2 = "类型"
       ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name2, :values => ["视频","PPT"])
+
+      @course = ModelLabelConfigCourse.create(
+        :label_info => {"方向" => ["经济"]}
+      )
     }
 
     describe "create" do
       it{
-        expect{
-          course = ModelLabelConfigCourse.create(
-            :label_info => {"方向" => ["经济"]}
-          )
-          expect(ModelLabelConfigCourse.where(:"label_info.方向".in => ["经济"]).to_a).to include(course)
-        }.to change{
-          ModelLabelConfigCourse.count
-        }.by(1)
-
+        expect(@course.valid?).to eq(true)
+        expect(ModelLabelConfigCourse.where(:"label_info.方向".in => ["经济"]).to_a).to include(@course)
       }
     end
 
     describe "course.set_label(name, values)" do
-      
+      it{
+        name = "方向"
+        label_before_count = @course.label_info[name].count
+        label = @course.set_label(name,"法律")
+        label_after_count = @course.label_info[name].count
+        expect(label_before_count + 1).to eq(label_after_count)
+        expect(@course.label_info).to eq(label)
+      }
     end
 
     describe "course.add_label(name, value)" do
-      # TODO
+      it{
+        label_info_before_length = @course.label_info.length
+        label = @course.add_label("职务", "投资理财")
+        label_info_after_length = @course.label_info.length
+        expect(label_info_before_length + 1).to eq(label_info_after_length)
+        expect(@course.label_info).to eq(label)
+      }
     end
 
     describe "course.remove_label(name, value)" do
-      # TODO
+      it{
+        label1 = @course.add_label("职务", "投资理财")
+        label_info_before_length = @course.label_info.length
+        label2 = @course.remove_label("方向","经济")
+        label_info_after_length = @course.label_info.length
+        expect(label_info_before_length - 1).to eq(label_info_after_length)
+        expect(@course.label_info).to eq(label2)
+      }
     end
-  end
 
-  describe "ModelLabelConfigCourse.with_label(name, value)" do
-    # TODO
-  end
+    describe "course.get_label_values(label_name)" do
+      it{
+        name = "方向"
+        label = @course.set_label(name,"法律")
+        values = @course.get_label_values(name)
+        expect(@course.label_info[name]).to eq(values)
+      }
+    end
 
-  describe "ModelLabelConfigCourse.get_label_names" do
-    # TODO
-  end
+    describe "ModelLabelConfigCourse.with_label(name, value)" do
+      it{
+        temp = []
+        temp.push(@course)
+        @course1 = ModelLabelConfigCourse.create(
+          :label_info => {"职务" => ["投资理财"]}
+        )
+        temp.push(@course1)
+        search_label = ModelLabelConfigCourse.with_label("方向",["经济"]).first
+        expect(temp).to include(search_label)
+      }
+    end
 
-  describe "course.get_label_values(label_name)" do
-    # TODO
+    describe "ModelLabelConfigCourse.get_label_names" do
+      it{
+        temp = []
+        temp.push(@course)
+        @course1 = ModelLabelConfigCourse.create(
+          :label_info => {"职务" => ["投资理财"]}
+        )
+        temp.push(@course1)
+        # temp.each do |nm|
+        #   p nm.label_info
+        # end
+        search_names = ModelLabelConfigCourse.get_label_names
+        p search_names
+        # expect(ModelLabelConfigCourse.get_label_names).to eq()
+      }
+    end
   end
 end

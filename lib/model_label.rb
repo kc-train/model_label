@@ -19,7 +19,7 @@ module ModelLabel
       config[:label_model_info] = info
 
       info.values.each do |clazz|
-        clazz.send(:include, ModelLabel::ConfigCourses)
+        clazz.send(:include, ModelLabel::HostMethods)
       end
 
       ModelLabel.instance_variable_set(:@model_label_config, config)
@@ -43,6 +43,6 @@ module ModelLabel
 end
 
 # 引用 rails engine
-require 'model_label/config_courses'
+require 'model_label/host_methods'
 require 'model_label/engine'
 require 'model_label/rails_routes'
