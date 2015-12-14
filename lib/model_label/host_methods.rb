@@ -5,12 +5,21 @@ module ModelLabel
       field :label_info, :type => Hash
 
       scope :with_label, ->(name, value) {
+        value = value.split if value.class == String
+        value if value.class == Array
         where(:"label_info.#{name}".in => value)
       }
+    end
 
-      def self.get_label_names
-        info = self.label_info || {}
-        return info
+    class_methods do
+      def get_label_names
+        # TODO ModelLabelConfigCourse 需要改进的部分
+        temp = []
+        label_all = ModelLabelConfigCourse.all.to_a
+        label_all.each do |label|
+          temp.push(label.label_info.keys)
+        end
+        return temp.flatten
       end
     end
 
