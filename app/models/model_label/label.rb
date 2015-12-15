@@ -11,13 +11,6 @@ module ModelLabel
 
     validates :model, uniqueness: {scope: :name}
 
-    before_validation :values_convert_string
-
-    # 将 values 中的元素转成字符
-    def values_convert_string
-      self.values.map{|val|val.to_s}
-    end
-
     validate :validation_model_pattern
 
     def validation_model_pattern
@@ -34,7 +27,7 @@ module ModelLabel
 
     # 验证 values 元素重复
     def validation_values
-      if values_convert_string.uniq.count != values_convert_string.count
+      if self.values.map{|val|val.to_s}.uniq.count != self.values.map{|val|val.to_s}.count
         errors.add(:values, "values 中元素重复")
       end
     end

@@ -5,9 +5,7 @@ module ModelLabel
       field :label_info, :type => Hash
 
       scope :with_label, ->(name, value) {
-        value = [*value] if value.class == String
-        value if value.class == Array
-        where(:"label_info.#{name}".in => value)
+        where(:"label_info.#{name}".in => [*value])
       }
     end
 
@@ -19,25 +17,29 @@ module ModelLabel
 
     def set_label(name, value)
       info = self.label_info || {}
-      old_values = []
-      old_values.push value
-      info[name] = old_values
+      info[name] = [*value]
       self.label_info = info
     end
 
     def add_label(name, value)
       info = self.label_info || {}
       old_values = info[name] || []
-      old_values.push value
-      info[name] = old_values
-      self.label_info = info
+      old_values.push value if value.class == String
+      if value.class == Array
+        value.each do |val| 
+          old_values.push val 
+        end
+      end
     end
 
     def remove_label(name, value)
       info = self.label_info || {}
-      old_values = info[name] || []
-      info[name] = old_values
-      self.label_info = info.tap { |hs| hs.delete(name) }
+      info[name].delete(value) if value.class == String
+      if value.class == Array
+        value.each do |val| 
+          info[name].delete(val) 
+        end 
+      end
     end
 
     def get_label_values(label_name)

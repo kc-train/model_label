@@ -116,28 +116,30 @@ RSpec.describe ModelLabel::Label, type: :model do
 
     describe "course.set_label(name, values)" do
       it{
-        label = @course.set_label("方向","法律")
-        expect(label["方向"]).to eq(["法律"])
+        @course.set_label("方向","法律")
+        expect(@course.label_info["方向"]).to eq(["法律"])
       }
     end
 
     describe "course.add_label(name, value)" do
       it{
-        label_info_before_length = @course.label_info.length
-        label = @course.add_label("职务", "投资理财")
-        label_info_after_length = @course.label_info.length
-        expect(label_info_before_length + 1).to eq(label_info_after_length)
-        expect(label).to eq(@course.label_info)
+        name = "方向"
+        label_info_before_length = @course.label_info[name].length
+        @course.add_label(name, ["投资理财","法律"])
+        label_info_after_length = @course.label_info[name].length
+        expect(label_info_before_length + 2).to eq(label_info_after_length)
+        expect(@course.label_info[name]).to eq(["经济","投资理财","法律"])
       }
     end
 
     describe "course.remove_label(name, value)" do
       it{
-        label_info_before_length = @course.label_info.length
-        label2 = @course.remove_label("方向","经济")
-        label_info_after_length = @course.label_info.length
-        expect(label_info_before_length - 1).to eq(label_info_after_length)
-        expect(label2).to eq({})
+        @course.add_label("方向", ["投资理财","法律"])
+        label_info_before_length = @course.label_info["方向"].length
+        @course.remove_label("方向",["经济","法律"])
+        label_info_after_length = @course.label_info["方向"].length
+        expect(label_info_before_length - 2).to eq(label_info_after_length)
+        expect(@course.label_info["方向"]).to eq(["投资理财"])
       }
     end
 
