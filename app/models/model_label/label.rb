@@ -7,9 +7,16 @@ module ModelLabel
     field :name , type: String
     field :values, type: Array
 
-    validates :model, :name, presence: true
+    validates :model, :name, :values, presence: true
 
     validates :model, uniqueness: {scope: :name}
+
+    before_validation :values_convert_string
+
+    # 将 values 中的元素转成字符
+    def values_convert_string
+      self.values.map{|val|val.to_s}
+    end
 
     validate :validation_model_pattern
 
@@ -20,23 +27,15 @@ module ModelLabel
 
     # 验证模型名是否在配置的范围内
     def validation_exist_model
-      temp = []
-      ModelLabel.get_models.each do |model_nm|
-        temp.push(model_nm.to_s)
-      end
-      if !temp.include?(self.model)
+      if !ModelLabel.get_models.map{|mod| mod.to_s}.include?(self.model)
         errors.add(:model_name, "模型名不在范围内")
       end
     end
 
-    # 验证 values 元素重复和格式
+    # 验证 values 元素重复
     def validation_values
-      self_values_before = self.values
-      if self_values_before != nil
-        self_values_after = self_values_before.uniq
-        if (self_values_before.count != self_values_after.count) || self_values_before.map{|item| item.is_a?(String) }.include?(false)
-          errors.add(:values, "values 中元素重复或格式不正确")
-        end
+      if values_convert_string.uniq.count != values_convert_string.count
+        errors.add(:values, "values 中元素重复")
       end
     end
   end

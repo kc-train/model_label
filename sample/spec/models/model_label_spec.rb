@@ -22,15 +22,14 @@ RSpec.describe ModelLabel::Label, type: :model do
   describe "field validates" do
     describe "model_name 取值必须在 config 中配置的模型名范围内" do
       it{
-        name = "方向"
         ModelLabel.get_models.each do |model_name|
-          ml = ModelLabel::Label.create(:model => model_name.to_s,:name => name)
+          ml = ModelLabel::Label.create(:model => model_name.to_s,:name => "方向",:values => ["a","b"])
           expect(ml.valid?).to eq(true)
         end
       }
 
       it{
-        ml = ModelLabel::Label.create(:model => "Lifeihahah",:name => "职务")
+        ml = ModelLabel::Label.create(:model => "Lifeihahah",:name => "职务",:values => ["a","b"])
         expect(ml.valid?).to eq(false)
       }
     end
@@ -117,12 +116,8 @@ RSpec.describe ModelLabel::Label, type: :model do
 
     describe "course.set_label(name, values)" do
       it{
-        name = "方向"
-        label_before_count = @course.label_info[name].count
-        label = @course.set_label(name,"法律")
-        label_after_count = @course.label_info[name].count
-        expect(label_before_count + 1).to eq(label_after_count)
-        expect(@course.label_info).to eq(label)
+        label = @course.set_label("方向","法律")
+        expect(label["方向"]).to eq(["法律"])
       }
     end
 
@@ -132,27 +127,24 @@ RSpec.describe ModelLabel::Label, type: :model do
         label = @course.add_label("职务", "投资理财")
         label_info_after_length = @course.label_info.length
         expect(label_info_before_length + 1).to eq(label_info_after_length)
-        expect(@course.label_info).to eq(label)
+        expect(label).to eq(@course.label_info)
       }
     end
 
     describe "course.remove_label(name, value)" do
       it{
-        label1 = @course.add_label("职务", "投资理财")
         label_info_before_length = @course.label_info.length
         label2 = @course.remove_label("方向","经济")
         label_info_after_length = @course.label_info.length
         expect(label_info_before_length - 1).to eq(label_info_after_length)
-        expect(@course.label_info).to eq(label2)
+        expect(label2).to eq({})
       }
     end
 
     describe "course.get_label_values(label_name)" do
       it{
-        name = "方向"
-        label = @course.set_label(name,"法律")
-        values = @course.get_label_values(name)
-        expect(@course.label_info[name]).to eq(values)
+        values = @course.get_label_values("方向")
+        expect(values).to eq(["经济"])
       }
     end
 
@@ -171,18 +163,9 @@ RSpec.describe ModelLabel::Label, type: :model do
 
     describe "ModelLabelConfigCourse.get_label_names" do
       it{
-        temp = []
-        ModelLabelConfigCourse.create(
-          :label_info => {"职务" => ["投资理财"]}
-        )
         search_names = ModelLabelConfigCourse.get_label_names
 
-        label_all = ModelLabelConfigCourse.all.to_a
-        label_all.each do |label|
-          temp.push(label.label_info.keys)
-        end
-        
-        expect(search_names).to eq(temp.flatten)
+        expect(search_names).to include("方向")
       }
     end
   end
