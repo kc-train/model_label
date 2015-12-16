@@ -17,25 +17,34 @@ module ModelLabel
 
     def set_label(name, value)
       info = self.label_info || {}
-      info[name] = [*value]
+      old_values = info[name] || []
+      old_values = [*value]
+      searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
+      searched_label.values = old_values.uniq
+      searched_label.save
+      info[name] = searched_label.values
       self.label_info = info
     end
 
     def add_label(name, value)
       info = self.label_info || {}
       old_values = info[name] || []
-      old_values.push value if value.class == String
-      old_values += value if value.class == Array
-      info[name] = old_values
+      old_values += [*value]
+      searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
+      searched_label.values = old_values.uniq
+      searched_label.save
+      info[name] = searched_label.values
       self.label_info = info
     end
 
     def remove_label(name, value)
       info = self.label_info || {}
       old_values = info[name] || []
-      old_values.delete(value) if value.class == String
-      old_values -= value if value.class == Array
-      info[name] = old_values
+      old_values += [*value]
+      searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
+      searched_label.values -= old_values.uniq
+      searched_label.save
+      info[name] = searched_label.values
       self.label_info = info
     end
 

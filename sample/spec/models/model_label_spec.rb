@@ -116,37 +116,45 @@ RSpec.describe ModelLabel::Label, type: :model do
 
     describe "course.set_label(name, values)" do
       it{
-        @course.set_label("方向","法律")
-        expect(@course.label_info["方向"]).to eq(["法律"])
+        @course.set_label("方向",["法律"])
+        @label = ModelLabel::Label.where(:model => "ModelLabelConfigCourse",:name => "方向").first
+        expect(@label.values).to eq(["法律"])
       }
     end
 
     describe "course.add_label(name, value)" do
       it{
-        name = "方向"
-        label_info_before_length = @course.label_info[name].length
-        @course.add_label(name, ["投资理财","法律"])
-        label_info_after_length = @course.label_info[name].length
-        expect(label_info_before_length + 2).to eq(label_info_after_length)
-        expect(@course.label_info[name]).to eq(["经济","投资理财","法律"])
+        @label = ModelLabel::Label.where(:model => "ModelLabelConfigCourse",:name => "方向").first
+        @course.add_label("方向", ["经济","投资理财","法律"])
+        @label1 = ModelLabel::Label.where(:model => "ModelLabelConfigCourse",:name => "方向").first
+        expect(@label.values.count + 1).to eq(@label1.values.count)
+        expect(@label1.values).to include("经济","投资理财","法律")
       }
     end
 
     describe "course.remove_label(name, value)" do
       it{
-        @course.add_label("方向", ["投资理财","法律"])
-        label_info_before_length = @course.label_info["方向"].length
-        @course.remove_label("方向",["经济","法律"])
-        label_info_after_length = @course.label_info["方向"].length
-        expect(label_info_before_length - 2).to eq(label_info_after_length)
-        expect(@course.label_info["方向"]).to eq(["投资理财"])
+        @label = ModelLabel::Label.where(:model => "ModelLabelConfigCourse",:name => "方向").first
+        @course.remove_label("方向","经济")
+        @label1 = ModelLabel::Label.where(:model => "ModelLabelConfigCourse",:name => "方向").first
+        expect(@label.values.count - 1).to eq(@label1.values.count)
+        expect(@label1.values).to eq(["法律"])
+      }
+
+      it{
+        val = ["经济","法律"]
+        @label = ModelLabel::Label.where(:model => "ModelLabelConfigCourse",:name => "方向").first
+        @course.remove_label("方向",val)
+        @label1 = ModelLabel::Label.where(:model => "ModelLabelConfigCourse",:name => "方向").first
+        expect(@label.values.count).to eq(@label1.values.count)
+        expect(@label1.values).to eq(@label.values)
       }
     end
 
     describe "course.get_label_values(label_name)" do
       it{
         values = @course.get_label_values("方向")
-        expect(values).to eq(["经济"])
+        expect(values).to include("经济")
       }
     end
 
