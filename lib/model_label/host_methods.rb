@@ -25,21 +25,18 @@ module ModelLabel
       info = self.label_info || {}
       old_values = info[name] || []
       old_values.push value if value.class == String
-      if value.class == Array
-        value.each do |val| 
-          old_values.push val 
-        end
-      end
+      old_values += value if value.class == Array
+      info[name] = old_values
+      self.label_info = info
     end
 
     def remove_label(name, value)
       info = self.label_info || {}
-      info[name].delete(value) if value.class == String
-      if value.class == Array
-        value.each do |val| 
-          info[name].delete(val) 
-        end 
-      end
+      old_values = info[name] || []
+      old_values.delete(value) if value.class == String
+      old_values -= value if value.class == Array
+      info[name] = old_values
+      self.label_info = info
     end
 
     def get_label_values(label_name)
