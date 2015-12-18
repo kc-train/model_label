@@ -92,6 +92,42 @@ RSpec.describe ModelLabel::Label, type: :model do
         }.by(0)
       }
     end
+
+    describe "name,model和values不能为空 " do 
+      it{
+        expect{
+          ml = ModelLabel::Label.create(name: "方向", values: ["a","b"])
+          expect(ml.valid?).to eq(false)
+          expect(ml.errors.messages[:model]).not_to be_nil
+        }.to change{
+          ModelLabel::Label.count
+        }.by(0)
+
+        expect{
+          ml = ModelLabel::Label.create(model: "ModelLabelConfigCourse", values: ["a","b"])
+          expect(ml.valid?).to eq(false)
+          expect(ml.errors.messages[:name]).not_to be_nil
+        }.to change{
+          ModelLabel::Label.count
+        }.by(0)
+
+        expect{
+          ml = ModelLabel::Label.create(model: "ModelLabelConfigCourse", name: "方向")
+          expect(ml.valid?).to eq(false)
+          expect(ml.errors.messages[:values]).not_to be_nil
+        }.to change{
+          ModelLabel::Label.count
+        }.by(0)
+
+        expect{
+          ml = ModelLabel::Label.create(model: "ModelLabelConfigCourse", name: "方向", values: [])
+          expect(ml.valid?).to eq(false)
+          expect(ml.errors.messages[:values]).not_to be_nil
+        }.to change{
+          ModelLabel::Label.count
+        }.by(0)
+      }
+    end
   end
 
   describe "ModelLabelConfigCourse 设置 label" do
@@ -141,6 +177,7 @@ RSpec.describe ModelLabel::Label, type: :model do
         expect(@label1.values).to eq(["法律"])
       }
 
+      # Label中的values不能为空，当要移除的values与label中的相等时 移除失效
       it{
         val = ["经济","法律"]
         @label = ModelLabel::Label.where(:model => "ModelLabelConfigCourse",:name => "方向").first

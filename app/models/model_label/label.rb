@@ -27,6 +27,7 @@ module ModelLabel
 
     # 验证 values 元素重复
     def validation_values
+      return false if self.values == nil 
       if self.values.map{|val|val.to_s}.uniq.count != self.values.map{|val|val.to_s}.count
         errors.add(:values, "values 中元素重复")
       end
