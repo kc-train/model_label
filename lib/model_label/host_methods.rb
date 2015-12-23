@@ -17,7 +17,6 @@ module ModelLabel
 
     def set_label(name, value)
       info = self.label_info || {}
-      old_values = info[name] || []
       old_values = [*value]
       searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
       searched_label.values = old_values.uniq
@@ -28,9 +27,9 @@ module ModelLabel
 
     def add_label(name, value)
       info = self.label_info || {}
-      old_values = info[name] || []
-      old_values += [*value]
       searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
+      old_values = searched_label.values || []
+      old_values += [*value]
       searched_label.values = old_values.uniq
       searched_label.save
       info[name] = searched_label.values
@@ -39,9 +38,9 @@ module ModelLabel
 
     def remove_label(name, value)
       info = self.label_info || {}
-      old_values = info[name] || []
-      old_values += [*value]
+      old_values = [*value]
       searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
+      return false if old_values.count >= searched_label.values.count
       searched_label.values -= old_values.uniq
       searched_label.save
       info[name] = searched_label.values

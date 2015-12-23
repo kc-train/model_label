@@ -133,7 +133,7 @@ RSpec.describe ModelLabel::Label, type: :model do
   describe "ModelLabelConfigCourse 设置 label" do
     before{
       name1 = "方向"
-      ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name1, :values => ["法律","经济"])
+      ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name1, :values => ["法律","经济","政治"])
 
       name2 = "类型"
       ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name2, :values => ["视频","PPT"])
@@ -174,17 +174,21 @@ RSpec.describe ModelLabel::Label, type: :model do
         @course.remove_label("方向","经济")
         @label1 = ModelLabel::Label.where(:model => "ModelLabelConfigCourse",:name => "方向").first
         expect(@label.values.count - 1).to eq(@label1.values.count)
-        expect(@label1.values).to eq(["法律"])
+        expect(@label1.values).to eq(["法律","政治"])
       }
 
       # Label中的values不能为空，当要移除的values与label中的相等时 移除失效
       it{
-        val = ["经济","法律"]
+        label_rm = @course.remove_label("方向",["经济","法律","政治"])
+        expect(label_rm).to eq(false)
+      }
+
+      it{
         @label = ModelLabel::Label.where(:model => "ModelLabelConfigCourse",:name => "方向").first
-        @course.remove_label("方向",val)
+        @course.remove_label("方向",["经济","val"])
         @label1 = ModelLabel::Label.where(:model => "ModelLabelConfigCourse",:name => "方向").first
-        expect(@label.values.count).to eq(@label1.values.count)
-        expect(@label1.values).to eq(@label.values)
+        expect(@label.values.count - 1).to eq(@label1.values.count)
+        expect(@label1.values).to eq(["法律","政治"])
       }
     end
 
