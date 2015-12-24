@@ -139,7 +139,7 @@ RSpec.describe ModelLabel::Label, type: :model do
       ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name2, :values => ["视频","PPT"])
 
       @course = ModelLabelConfigCourse.create(
-        :label_info => {"方向" => ["法律","经济","政治"]}
+        :label_info => {"方向" => ["法律","经济","政治"],"类型" => ["视频","PPT"]}
       )
     }
 
@@ -199,14 +199,8 @@ RSpec.describe ModelLabel::Label, type: :model do
 
     describe "ModelLabelConfigCourse.with_label(name, value)" do
       it{
-        temp = []
-        temp.push(@course)
-        @course1 = ModelLabelConfigCourse.create(
-          :label_info => {"类型" => ["视频"]}
-        )
-        temp.push(@course1)
         search_label = ModelLabelConfigCourse.with_label("方向","经济").first
-        expect(temp).to include(search_label)
+        expect(@course).to eq(search_label)
       }
     end
 
