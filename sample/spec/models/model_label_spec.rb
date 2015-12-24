@@ -202,7 +202,7 @@ RSpec.describe ModelLabel::Label, type: :model do
         temp = []
         temp.push(@course)
         @course1 = ModelLabelConfigCourse.create(
-          :label_info => {"职务" => ["投资理财"]}
+          :label_info => {"类型" => ["视频"]}
         )
         temp.push(@course1)
         search_label = ModelLabelConfigCourse.with_label("方向","经济").first
