@@ -13,9 +13,36 @@ module ModelLabel
     def get_mount_prefix
       model_label_config[:mount_prefix]
     end
+
+    def set_config(info)
+      config = ModelLabel.model_label_config
+      config[:label_model_info] = info
+
+      info.values.each do |clazz|
+        clazz.send(:include, ModelLabel::HostMethods)
+      end
+
+      ModelLabel.instance_variable_set(:@model_label_config, config)
+    end
+
+    def get_model_names
+      label_model_info = ModelLabel.model_label_config[:label_model_info]
+      label_model_info.keys
+    end
+
+    def get_models
+      label_model_info = ModelLabel.model_label_config[:label_model_info]
+      label_model_info.values
+    end
+
+    def get_model_by_name(name)
+      label_model_info = ModelLabel.model_label_config[:label_model_info]
+      label_model_info[name]
+    end
   end
 end
 
 # 引用 rails engine
+require 'model_label/host_methods'
 require 'model_label/engine'
 require 'model_label/rails_routes'
