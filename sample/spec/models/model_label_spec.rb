@@ -153,6 +153,7 @@ RSpec.describe ModelLabel::Label, type: :model do
     describe "course.set_label(name, values)" do
       it{
         @course.set_label("方向",["投资理财"])
+        expect(@course.label_info["方向"].count).to eq(1)
         expect(@course.label_info["方向"]).to eq(["投资理财"])
       }
 
@@ -165,6 +166,7 @@ RSpec.describe ModelLabel::Label, type: :model do
     describe "course.add_label(name, value)" do
       it{
         @course.add_label("方向", ["投资理财"])
+        expect(@course.label_info["方向"].count).to eq(4)
         expect(@course.label_info["方向"]).to include("投资理财")
       }
 
@@ -177,11 +179,13 @@ RSpec.describe ModelLabel::Label, type: :model do
     describe "course.remove_label(name, value)" do
       it{
         @course.remove_label("方向","经济")
+        expect(@course.label_info["方向"].count).to eq(2)
         expect(@course.label_info["方向"]).to eq(["法律","政治"])
       }
 
       it{
         @course.remove_label("方向",["经济","法律","政治"])
+        expect(@course.label_info["方向"].count).to eq(0)
         expect(@course.label_info["方向"]).to eq([])
       }
 
