@@ -152,8 +152,8 @@ RSpec.describe ModelLabel::Label, type: :model do
 
     describe "course.set_label(name, values)" do
       it{
-        @course.set_label("方向",["政治"])
-        expect(@course.label_info["方向"]).to eq(["政治"])
+        @course.set_label("方向",["投资理财"])
+        expect(@course.label_info["方向"]).to eq(["投资理财"])
       }
 
       it{

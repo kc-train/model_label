@@ -31,7 +31,7 @@ module ModelLabel
       label_add = self.class.where(:"label_info.#{name}".in => old_values).first
       old_values += [*value]
       searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
-      return false if [*value].map{|val| searched_label.values.include?(val)}.include?(false)
+      return false if [*value].uniq.map{|val| searched_label.values.include?(val)}.include?(false)
       label_add.label_info[name] = old_values.uniq
       label_add.save
       self.label_info = label_add.label_info
@@ -41,7 +41,7 @@ module ModelLabel
       info = self.label_info || {}
       old_values = info[name] || []
       label_rm = self.class.where(:"label_info.#{name}".in => old_values).first
-      return false if [*value].map{|val| info[name].include?(val)}.include?(false)
+      return false if [*value].uniq.map{|val| info[name].include?(val)}.include?(false)
       label_rm.label_info[name] -= [*value]
       label_rm.save
       self.label_info = label_rm.label_info
