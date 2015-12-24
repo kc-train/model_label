@@ -159,7 +159,7 @@ RSpec.describe ModelLabel::Label, type: :model do
 
       it{
         course_setl = @course.set_label("方向",["hello"])
-        expect(course_setl).to eq(false)
+        expect(@course.errors.messages[:value]).not_to be_nil
       }
     end
 
@@ -172,7 +172,7 @@ RSpec.describe ModelLabel::Label, type: :model do
 
       it{
         course_addl = @course.add_label("方向", ["军史"])
-        expect(course_addl).to eq(false)
+        expect(@course.errors.messages[:value]).not_to be_nil
       }
     end
 
@@ -187,11 +187,6 @@ RSpec.describe ModelLabel::Label, type: :model do
         @course.remove_label("方向",["经济","法律","政治"])
         expect(@course.label_info["方向"].count).to eq(0)
         expect(@course.label_info["方向"]).to eq([])
-      }
-
-      it{
-        course_rm = @course.remove_label("方向",["经济","val","abc"])
-        expect(course_rm).to eq(false)
       }
     end
 
