@@ -4,14 +4,19 @@ module ModelLabel
     included do
       field :label_info, :type => Hash
 
+      validate :check_value_whether_in_label
+
       scope :with_label, ->(name, value) {
         where(:"label_info.#{name}".in => [*value])
       }
     end
 
-    def check_value_whether_in_label(name,value)
-      searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
-      if value.map{|val| searched_label.values.include?(val)}.include?(false)
+    def check_value_whether_in_label
+      info_key = self.label_info.keys.join
+      searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: info_key).first
+      return false if searched_label == nil
+      
+      if self.label_info[*info_key].map{|val| searched_label.values.include?(val)}.include?(false)
         errors.add(:value, "您所设置的value 不在规定的范围内")
       end
     end
@@ -24,26 +29,16 @@ module ModelLabel
 
     def set_label(name, value)
       old_values = [*value].uniq
-      feedback_infm = check_value_whether_in_label(name,old_values)
-      if feedback_infm == nil
-        self.label_info[name] = old_values
-        self.save
-      else
-        feedback_infm 
-      end
+      self.label_info[name] = old_values
+      self.save
     end
 
     def add_label(name, value)
       info = self.label_info || {}
       old_values = info[name] || []
       old_values += [*value]
-      feedback_infm = check_value_whether_in_label(name,[*value].uniq)
-      if feedback_infm == nil
-        self.label_info[name] = old_values.uniq
-        self.save
-      else
-        feedback_infm
-      end
+      self.label_info[name] = old_values.uniq
+      self.save
     end
 
     def remove_label(name, value)
