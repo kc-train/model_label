@@ -15,8 +15,6 @@ module ModelLabel
     end
 
     def set_config(info)
-      return false if info == nil
-      
       config = ModelLabel.model_label_config
       config[:label_model_info] = info
 

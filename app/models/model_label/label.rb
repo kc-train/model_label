@@ -25,7 +25,7 @@ module ModelLabel
 
     # 验证当 values 是空数组时，不允许通过校验
     def validation_values_array_whether_empty
-      if self.values == []
+      if self.values.blank?
         errors.add(:values, "values 数组不能为空")
       end
     end

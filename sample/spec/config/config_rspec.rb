@@ -19,10 +19,6 @@ RSpec.describe ModelLabel, type: :config do
     })
   end
 
-  after :context do
-    ModelLabel.set_config(nil)
-  end
-
   it{
     expect(ModelLabel.get_model_names).to include("课程", "测试题")
   }

@@ -302,22 +302,22 @@ RSpec.describe ModelLabel::Label, type: :model do
 
       it{
         model_in_label = ModelLabel::Label.with_model("ModelLabelConfigCourse").to_a
-        expect(model_in_label).to include(@model_label_one)
+        expect(model_in_label.count).to eq(2)
       }
 
       it{
         model_in_label = ModelLabel::Label.with_model(ModelLabelConfigCourse).to_a
-        expect(model_in_label).to include(@model_label_two)
+        expect(model_in_label.count).to eq(2)
       }
 
       it{
         model_in_label = ModelLabel::Label.with_model(ModelLabelConfigQuestion).to_a
-        expect(model_in_label).to include(@model_label_three)
+        expect(model_in_label.count).to eq(2)
       }
 
       it{
         model_in_label = ModelLabel::Label.with_model("ModelLabelConfigQuestion").to_a
-        expect(model_in_label).to include(@model_label_four)
+        expect(model_in_label.count).to eq(2)
       }
     end
   end

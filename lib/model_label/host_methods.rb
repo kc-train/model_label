@@ -28,11 +28,9 @@ module ModelLabel
     end
 
     def set_label(name, value)
-      if self.label_info.keys.include?(name)
-        afferent_value = [*value].uniq
-        self.label_info[name] = afferent_value
-        self.save
-      end
+      afferent_value = [*value].uniq
+      self.label_info[name] = afferent_value
+      self.save
     end
 
     def add_label(name, value)
