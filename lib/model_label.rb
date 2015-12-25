@@ -15,6 +15,8 @@ module ModelLabel
     end
 
     def set_config(info)
+      return false if info == nil
+      
       config = ModelLabel.model_label_config
       config[:label_model_info] = info
 
@@ -38,6 +40,11 @@ module ModelLabel
     def get_model_by_name(name)
       label_model_info = ModelLabel.model_label_config[:label_model_info]
       label_model_info[name]
+    end
+
+    def get_name_by_model(model)
+      label_model_info = ModelLabel.model_label_config[:label_model_info]
+      label_model_info.key(model)
     end
   end
 end

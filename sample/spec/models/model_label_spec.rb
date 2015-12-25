@@ -57,7 +57,7 @@ RSpec.describe ModelLabel::Label, type: :model do
         expect{
           ml = ModelLabel::Label.create(:model => model_name, :name => name, :values => ["a","b"])
           expect(ml.valid?).to eq(false)
-          expect(ml.errors.messages[:model]).not_to be_nil
+          expect(ml.errors.messages[:name]).not_to be_nil
         }.to change{
           ModelLabel::Label.count
         }.by(0)
@@ -138,8 +138,8 @@ RSpec.describe ModelLabel::Label, type: :model do
       name2 = "类型"
       ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name2, :values => ["视频","PPT"])
 
-      name2 = "职务"
-      ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name2, :values => ["柜员","管理员"])
+      name3 = "职务"
+      ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name3, :values => ["柜员","管理员"])
 
       @label_info_data = [
         {"方向" => ["法律","经济","政治"],"类型" => ["视频","PPT"]},
@@ -268,6 +268,56 @@ RSpec.describe ModelLabel::Label, type: :model do
       it{
         search_names = ModelLabelConfigCourse.get_label_names
         expect(search_names).to include("方向")
+      }
+    end
+  end
+
+  describe "ModelLabel::Label.with_model(model)" do 
+    before{
+      @temp = []
+      name1 = "职务"
+      @model_label_one = ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name1, :values => ["柜员","管理员"])
+      @temp.push(@model_label_one)
+
+      name2 = "方向"
+      @model_label_two = ModelLabel::Label.create(:model => ModelLabelConfigCourse, :name => name2, :values => ["法律","经济","政治","投资理财"])
+      @temp.push(@model_label_two)
+
+      name3 = "类型"
+      @model_label_three = ModelLabel::Label.create(:model => ModelLabelConfigQuestion, :name => name3, :values => ["Word","Excel","PPT","视频"])
+      @temp.push(@model_label_three)
+
+      name4 = "方向"
+      @model_label_four = ModelLabel::Label.create(:model => "ModelLabelConfigQuestion", :name => name4, :values => ["法律","经济","政治","投资理财"])
+      @temp.push(@model_label_four)
+    }
+
+    describe "传入的值分别为字符串和类" do
+      it{
+        @temp.each do |mdlb|
+          expect(mdlb.valid?).to eq(true)
+          expect(ModelLabel::Label.where(model: mdlb.model, name: mdlb.name).first).to eq(mdlb)
+        end
+      }
+
+      it{
+        model_in_label = ModelLabel::Label.with_model("ModelLabelConfigCourse").to_a
+        expect(model_in_label).to include(@model_label_one)
+      }
+
+      it{
+        model_in_label = ModelLabel::Label.with_model(ModelLabelConfigCourse).to_a
+        expect(model_in_label).to include(@model_label_two)
+      }
+
+      it{
+        model_in_label = ModelLabel::Label.with_model(ModelLabelConfigQuestion).to_a
+        expect(model_in_label).to include(@model_label_three)
+      }
+
+      it{
+        model_in_label = ModelLabel::Label.with_model("ModelLabelConfigQuestion").to_a
+        expect(model_in_label).to include(@model_label_four)
       }
     end
   end

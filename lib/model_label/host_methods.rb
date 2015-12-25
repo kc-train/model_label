@@ -36,13 +36,11 @@ module ModelLabel
     end
 
     def add_label(name, value)
-      if self.label_info.keys.include?(name)
-        info = self.label_info || {}
-        old_values = info[name] || []
-        old_values += [*value]
-        self.label_info[name] = old_values.uniq
-        self.save
-      end
+      info = self.label_info || {}
+      old_values = info[name] || []
+      old_values += [*value]
+      self.label_info[name] = old_values.uniq
+      self.save
     end
 
     def remove_label(name, value)
