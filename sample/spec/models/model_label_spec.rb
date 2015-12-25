@@ -274,22 +274,28 @@ RSpec.describe ModelLabel::Label, type: :model do
 
   describe "ModelLabel::Label.with_model(model)" do 
     before{
-      @temp = []
+      @temp           = []
+      @course_label   = []
+      @question_label = []
       name1 = "职务"
       @model_label_one = ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name1, :values => ["柜员","管理员"])
       @temp.push(@model_label_one)
+      @course_label.push(@model_label_one)
 
       name2 = "方向"
       @model_label_two = ModelLabel::Label.create(:model => ModelLabelConfigCourse, :name => name2, :values => ["法律","经济","政治","投资理财"])
       @temp.push(@model_label_two)
+      @course_label.push(@model_label_two)
 
       name3 = "类型"
       @model_label_three = ModelLabel::Label.create(:model => ModelLabelConfigQuestion, :name => name3, :values => ["Word","Excel","PPT","视频"])
       @temp.push(@model_label_three)
+      @question_label.push(@model_label_three)
 
       name4 = "方向"
       @model_label_four = ModelLabel::Label.create(:model => "ModelLabelConfigQuestion", :name => name4, :values => ["法律","经济","政治","投资理财"])
       @temp.push(@model_label_four)
+      @question_label.push(@model_label_four)
     }
 
     describe "传入的值分别为字符串和类" do
@@ -302,22 +308,22 @@ RSpec.describe ModelLabel::Label, type: :model do
 
       it{
         model_in_label = ModelLabel::Label.with_model("ModelLabelConfigCourse").to_a
-        expect(model_in_label.count).to eq(2)
+        expect(model_in_label).to match_array(@course_label)
       }
 
       it{
         model_in_label = ModelLabel::Label.with_model(ModelLabelConfigCourse).to_a
-        expect(model_in_label.count).to eq(2)
+        expect(model_in_label).to match_array(@course_label)
       }
 
       it{
         model_in_label = ModelLabel::Label.with_model(ModelLabelConfigQuestion).to_a
-        expect(model_in_label.count).to eq(2)
+        expect(model_in_label).to match_array(@question_label)
       }
 
       it{
         model_in_label = ModelLabel::Label.with_model("ModelLabelConfigQuestion").to_a
-        expect(model_in_label.count).to eq(2)
+        expect(model_in_label).to match_array(@question_label)
       }
     end
   end
