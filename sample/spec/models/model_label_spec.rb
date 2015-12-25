@@ -138,76 +138,135 @@ RSpec.describe ModelLabel::Label, type: :model do
       name2 = "类型"
       ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name2, :values => ["视频","PPT"])
 
-      @course = ModelLabelConfigCourse.create(
-        :label_info => {"方向" => ["法律","经济","政治"],"类型" => ["视频","PPT"]}
-      )
+      name2 = "职务"
+      ModelLabel::Label.create(:model => "ModelLabelConfigCourse", :name => name2, :values => ["柜员","管理员"])
+
+      @label_info_data = [
+        {"方向" => ["法律","经济","政治"],"类型" => ["视频","PPT"]},
+        {"职务" => ["柜员","管理员"]},
+        {"类型" => ["视频","PPT"]},
+        {"方向" => ["法律","经济"]}
+      ]
+      @model_label_data = []
+      @label_info_data.each do |info|
+        course = ModelLabelConfigCourse.create(
+          :label_info => info
+        )
+        @model_label_data.push(course)
+      end
     }
 
     describe "create" do
       it{
-        expect(@course.valid?).to eq(true)
-        expect(ModelLabelConfigCourse.where(:"label_info.方向".in => ["经济"]).to_a).to include(@course)
+        @model_label_data.each do |info|
+          info_key = info.label_info.keys
+          info_key.each do |key|
+            expect(info.valid?).to eq(true)
+            expect(ModelLabelConfigCourse.where(:"label_info.#{key}".in => info.label_info[key]).to_a).to include(info)
+          end
+        end
       }
     end
 
     describe "course.set_label(name, values)" do
       it{
-        @course.set_label("方向",["投资理财"])
-        expect(@course.label_info["方向"].count).to eq(1)
-        expect(@course.label_info["方向"]).to eq(["投资理财"])
+        name = "方向"
+        @model_label_data.each do |info|
+          if info.label_info.keys.include?(name)
+            info.set_label(name,["投资理财"])
+            info = ModelLabelConfigCourse.find info.id
+            expect(info.label_info[name]).to eq(["投资理财"])
+          end
+        end
       }
 
       it{
-        course_setl = @course.set_label("方向",["hello"])
-        expect(@course.errors.messages[:value]).not_to be_nil
+        name = "方向"
+        @model_label_data.each do |info|
+          if info.label_info.keys.include?(name)
+            course_setl = info.set_label(name,["hello"])
+            info = ModelLabelConfigCourse.find info.id
+            expect(info.label_info[name]).not_to include("hello")
+          end
+        end
       }
     end
 
     describe "course.add_label(name, value)" do
       it{
-        @course.add_label("方向", ["投资理财"])
-        expect(@course.label_info["方向"].count).to eq(4)
-        expect(@course.label_info["方向"]).to include("投资理财")
+        name = "方向"
+        @model_label_data.each do |info|
+          if info.label_info.keys.include?(name)
+            info.add_label(name, ["投资理财"])
+            info = ModelLabelConfigCourse.find info.id
+            expect(info.label_info[name]).to include("投资理财")
+          end
+        end
       }
 
       it{
-        course_addl = @course.add_label("方向", ["军史"])
-        expect(@course.errors.messages[:value]).not_to be_nil
+        name = "方向"
+        @model_label_data.each do |info|
+          if info.label_info.keys.include?(name)
+            course_addl = info.add_label(name, ["军史"])
+            info = ModelLabelConfigCourse.find info.id
+            expect(info.label_info[name]).not_to include("军史")
+          end
+        end
       }
     end
 
     describe "course.remove_label(name, value)" do
       it{
-        @course.remove_label("方向","经济")
-        expect(@course.label_info["方向"].count).to eq(2)
-        expect(@course.label_info["方向"]).to eq(["法律","政治"])
+        name = "方向"
+        @model_label_data.each do |info|
+          if info.label_info.keys.include?(name)
+            info.remove_label("方向","经济")
+            info = ModelLabelConfigCourse.find info.id
+            expect(info.label_info["方向"]).not_to include("经济")
+          end
+        end
       }
 
       it{
-        @course.remove_label("方向",["经济","法律","政治"])
-        expect(@course.label_info["方向"].count).to eq(0)
-        expect(@course.label_info["方向"]).to eq([])
+        name = "方向"
+        @model_label_data.each do |info|
+          if info.label_info.keys.include?(name)
+            info.remove_label(name,["经济","法律","政治"])
+            info = ModelLabelConfigCourse.find info.id
+            expect(info.label_info[name]).not_to include("经济","法律","政治")
+          end
+        end
       }
     end
 
     describe "course.get_label_values(label_name)" do
       it{
-        values = @course.get_label_values("方向")
-        expect(values).to include("经济")
+        name = "方向"
+        @model_label_data.each do |info|
+          if info.label_info.keys.include?(name)
+            values = info.get_label_values(name)
+            expect(values).to include("经济")
+          end
+        end
       }
     end
 
     describe "ModelLabelConfigCourse.with_label(name, value)" do
       it{
-        search_label = ModelLabelConfigCourse.with_label("方向","经济").first
-        expect(@course).to eq(search_label)
+        name = "方向"
+        @model_label_data.each do |info|
+          if info.label_info.keys.include?(name)
+            search_label = ModelLabelConfigCourse.with_label(name,"经济").to_a
+            expect(search_label).to include(info)
+          end
+        end
       }
     end
 
     describe "ModelLabelConfigCourse.get_label_names" do
       it{
         search_names = ModelLabelConfigCourse.get_label_names
-
         expect(search_names).to include("方向")
       }
     end

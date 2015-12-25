@@ -28,17 +28,21 @@ module ModelLabel
     end
 
     def set_label(name, value)
-      afferent_value = [*value].uniq
-      self.label_info[name] = afferent_value
-      self.save
+      if self.label_info.keys.include?(name)
+        afferent_value = [*value].uniq
+        self.label_info[name] = afferent_value
+        self.save
+      end
     end
 
     def add_label(name, value)
-      info = self.label_info || {}
-      old_values = info[name] || []
-      old_values += [*value]
-      self.label_info[name] = old_values.uniq
-      self.save
+      if self.label_info.keys.include?(name)
+        info = self.label_info || {}
+        old_values = info[name] || []
+        old_values += [*value]
+        self.label_info[name] = old_values.uniq
+        self.save
+      end
     end
 
     def remove_label(name, value)
