@@ -17,9 +17,7 @@ module ModelLabel
         searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
         if searched_label == nil
           errors.add(:name, "name 不在规定的范围内")
-        end
-
-        if self.label_info[name].map{|val| searched_label.values.include?(val)}.include?(false)
+        elseif self.label_info[name].map{|val| searched_label.values.include?(val)}.include?(false)
           errors.add(:value, "您所设置的value 不在规定的范围内")
         end
       end

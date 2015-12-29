@@ -172,11 +172,9 @@ RSpec.describe ModelLabel::Label, type: :model do
       it{
         name = "方向"
         @model_label_data.each do |info|
-          if info.label_info.keys.include?(name)
-            info.set_label(name,["投资理财"])
-            info = ModelLabelConfigCourse.find info.id
-            expect(info.label_info[name]).to eq(["投资理财"])
-          end
+          info.set_label(name,["投资理财"])
+          info = ModelLabelConfigCourse.find info.id
+          expect(info.label_info[name]).to eq(["投资理财"])
         end
       }
 
