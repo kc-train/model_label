@@ -15,10 +15,11 @@ module ModelLabel
       info_key = self.label_info.keys
       info_key.each do |name|
         searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
+        #TODO 会不会出现 model 不合法导致 searched_label 为 nil 的情况
         if searched_label == nil
-          errors.add(:name, "name 不在规定的范围内")
-        elseif self.label_info[name].map{|val| searched_label.values.include?(val)}.include?(false)
-          errors.add(:value, "您所设置的value 不在规定的范围内")
+          errors.add(:name, "label_info的key 不在规定的范围内")
+        elsif self.label_info[name].map{|val| searched_label.values.include?(val)}.include?(false)
+            errors.add(:value, "label_info的value 不在规定的范围内")
         end
       end
     end
