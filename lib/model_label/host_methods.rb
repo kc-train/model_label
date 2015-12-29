@@ -16,11 +16,12 @@ module ModelLabel
       info_key.each do |name|
         searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
         if searched_label == nil
-          errors.add(:name, "name 不在规定的范围内")
-        end
-
-        if self.label_info[name].map{|val| searched_label.values.include?(val)}.include?(false)
-          errors.add(:value, "您所设置的value 不在规定的范围内")
+          errors.add(:name, "label_info的key 不在规定的范围内")
+        else
+          # 修改
+          if self.label_info[name].map{|val| searched_label.values.include?(val)}.include?(false)
+            errors.add(:value, "label_info的value 不在规定的范围内")
+          end
         end
       end
     end
