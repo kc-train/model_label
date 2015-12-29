@@ -39,6 +39,11 @@ module ModelLabel
       label_model_info = ModelLabel.model_label_config[:label_model_info]
       label_model_info[name]
     end
+
+    def get_name_by_model(model)
+      label_model_info = ModelLabel.model_label_config[:label_model_info]
+      label_model_info.key(model)
+    end
   end
 end
 

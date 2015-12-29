@@ -19,10 +19,6 @@ RSpec.describe ModelLabel, type: :config do
     })
   end
 
-  after :context do
-    ModelLabel.set_config(nil)
-  end
-
   it{
     expect(ModelLabel.get_model_names).to include("课程", "测试题")
   }
@@ -39,4 +35,11 @@ RSpec.describe ModelLabel, type: :config do
     expect(ModelLabel.get_model_by_name("测试题")).to eq(ModelLabelConfigQuestion)
   }
 
+  it{
+    expect(ModelLabel.get_name_by_model(ModelLabelConfigCourse)).to eq("课程")
+  }
+
+  it{
+    expect(ModelLabel.get_name_by_model(ModelLabelConfigQuestion)).to eq("测试题")
+  }
 end

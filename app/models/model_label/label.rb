@@ -9,13 +9,25 @@ module ModelLabel
 
     validates :model, :name, :values, presence: true
 
-    validates :model, uniqueness: {scope: :name}
+    validates :name, uniqueness: {scope: :model}
 
     validate :validation_model_pattern
 
+    scope :with_model, -> (model) {
+      where(model: model)
+    }
+
     def validation_model_pattern
+      self.validation_values_array_whether_empty
       self.validation_exist_model
       self.validation_values
+    end
+
+    # 验证当 values 是空数组时，不允许通过校验
+    def validation_values_array_whether_empty
+      if self.values.blank?
+        errors.add(:values, "values 数组不能为空")
+      end
     end
 
     # 验证模型名是否在配置的范围内
