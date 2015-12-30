@@ -12,7 +12,7 @@ module ModelLabel
     end
 
     def check_value_whether_in_label
-      info_key = self.label_info.keys
+      info_key = self.label_info.keys || {}
       info_key.each do |name|
         searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
         #TODO 会不会出现 model 不合法导致 searched_label 为 nil 的情况
