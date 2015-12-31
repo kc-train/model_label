@@ -169,6 +169,13 @@ RSpec.describe ModelLabel::Label, type: :model do
           end
         end
       }
+
+      it{
+        course = ModelLabelConfigCourse.create()
+        expect(course.valid?).to eq(true)
+        expect(course.label_info).to eq({})
+        expect(course.label_info.try(:keys)).to eq([])
+      }
     end
 
     describe "course.set_label(name, values)" do
@@ -194,7 +201,6 @@ RSpec.describe ModelLabel::Label, type: :model do
         end
       }
 
-      # TODO label_info的key 不在规定的范围内
       it{ 
         name = "abcd"
         @model_label_data.each do |info|
