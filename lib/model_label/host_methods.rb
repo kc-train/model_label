@@ -2,7 +2,7 @@ module ModelLabel
   module HostMethods
     extend ActiveSupport::Concern
     included do
-      field :label_info, :type => Hash
+      field :label_info, :type => Hash, :default => {}
 
       validate :check_value_whether_in_label
 
@@ -12,7 +12,7 @@ module ModelLabel
     end
 
     def check_value_whether_in_label
-      info_key = self.label_info.keys
+      info_key = self.label_info.try(:keys) || []
       info_key.each do |name|
         searched_label = ModelLabel::Label.where(:model => self.class.to_s, name: name).first
         if searched_label == nil
