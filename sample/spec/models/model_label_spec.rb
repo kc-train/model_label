@@ -201,7 +201,6 @@ RSpec.describe ModelLabel::Label, type: :model do
         end
       }
 
-      # TODO label_info的key 不在规定的范围内
       it{ 
         name = "abcd"
         @model_label_data.each do |info|
